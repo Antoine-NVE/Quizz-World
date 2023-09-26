@@ -1,3 +1,8 @@
+// ------------
+// VARIABLES
+// ------------
+
+// Variables pour l'affichage
 const container = document.getElementById("container");
 const boutons = document.getElementsByClassName("boutons");
 const start = document.getElementById("start");
@@ -5,11 +10,14 @@ const dropArea = document.getElementById("dropArea");
 const propositions = document.getElementsByClassName("propositions");
 const anecdotes = document.getElementById("anecdotes");
 const description = document.getElementById("description");
+
+// Variables qui gèrent le numéro de la question, le score et le niveau
 let questionNumero = 0;
-let juste = false;
 let score = 0;
 
-anecdotes.style.background = "transparent";
+// ---------
+// OBJETS
+// ---------
 
 class Quizz {
   constructor(titre, nom, extension) {
@@ -43,6 +51,10 @@ const microsoft = new Quizz("Microsoft", "microsoft", "jpg");
 const php = new Quizz("PHP", "php", "jpg");
 const internet = new Quizz("Méandres d'Internet", "internet", "jpg");
 
+// --------------------
+// AFFICHAGE INITIAL
+// --------------------
+
 container.innerHTML =
   web.carte +
   javascript.carte +
@@ -53,80 +65,88 @@ container.innerHTML =
   php.carte +
   internet.carte;
 
+anecdotes.style.background = "transparent";
+
+// --------
+// DEBUT
+// --------
+
+// Détecte le clique d'un bouton radio
 for (i = 0; i < boutons.length; i++) {
   const checked = document.getElementById(boutons[i].id);
-  choix = checked;
   checked.addEventListener("click", () => {
-    if (checked.id.includes("Debutant")) {
-      niveau = "débutant";
-    } else if (checked.id.includes("Confirme")) {
-      niveau = "confirmé";
-    } else {
-      niveau = "expert";
-    }
+    // Récupère le niveau choisi
 
+    // Demande le prénom et récupère la source de l'image du sujet choisi
     prenom = window.prompt("Veuillez saisir votre prénom");
-    image = document.getElementById(checked.name);
+    image = document.getElementById(checked.name).src;
 
+    // Récupère le json et crée un array avec
     fetch(`./json/quizz${checked.name}.json`)
       .then((response) => response.json())
       .then((response) => {
         answer = response.quizz;
 
+        // Récupère le niveu choisi
+        if (checked.id.includes("Debutant")) {
+          niveau = "débutant";
+          answer = answer.débutant;
+        } else if (checked.id.includes("Confirme")) {
+          niveau = "confirmé";
+          answer = answer.confirmé;
+        } else {
+          niveau = "expert";
+          answer = answer.expert;
+        }
+
+        // Affichage de la suite
         container.style.flexDirection = "column";
         description.innerHTML = `<h2>${checked.parentElement.children[0].textContent} - Niveau ${niveau}</h2>`;
         container.innerHTML = `
           <h2><span>${prenom}</span>, vous allez pouvoir démarrer ce Quizz</h2>
-          <img src="${image.src}" alt="${checked.name}">
+          <img src="${image}" alt="${checked.name}">
         `;
         start.style.display = "block";
       });
   });
 }
 
+// Détecte le clic du bouton "Start", qui est également le bouton "Suivant" et "Accueil"
 start.addEventListener("click", () => {
   anecdotes.innerHTML = "";
   anecdotes.style.background = "transparent";
 
+  // Si le bouton "Accueil est cliqué, reload la page"
   if (start.textContent == "Accueil") {
     window.location.reload();
-  }
-
-  if (juste == true) {
-    score = score + 1;
-    juste = false;
   }
 
   start.style.display = "none";
   dropArea.style.background = "white";
   dropArea.innerHTML = "<p>Posez votre réponse ici</p>";
 
+  // Si c'est le début du questionnaire, transforme le bouton start
   if (questionNumero == 0) {
     start.textContent = "Suivant";
     dropArea.style.display = "flex";
-
-    if (niveau === "débutant") {
-      answer = answer.débutant;
-    } else if (niveau === "confirmé") {
-      answer = answer.confirmé;
-    } else {
-      answer = answer.expert;
-    }
   }
 
-  if (questionNumero == 10) {
+  // Vérifie si c'était la dernière question
+  if (questionNumero == answer.length) {
     container.innerHTML = `
       <p>Quizz Terminé !</p>
       <p>${prenom}, vous avez obtenu le score de ${score}/10</p>
     `;
-
     dropArea.style.display = "none";
-
     start.innerHTML = "Accueil";
     start.style.display = "block";
-  } else {
+  }
+
+  // Question suivante
+  else {
     questionNumero++;
 
+    // Affichage de la question et des propositions
     container.innerHTML = `
     <p>Question ${questionNumero} : <span>${
       answer[questionNumero - 1].question
@@ -155,36 +175,47 @@ start.addEventListener("click", () => {
     </div>
   `;
 
+    // Détecte le début du drag d'un choix
     for (i = 0; i < propositions.length; i++) {
       const prop = document.getElementById(propositions[i].id);
       prop.addEventListener("dragstart", () => {
-        dropArea.addEventListener("dragenter", () => {
-          prop.addEventListener("dragend", () => {
-            prop.remove();
-            dropArea.innerHTML = `<button id="${prop.id}" class="propositions" draggable="true">${prop.textContent}</button>`;
-            for (j = 0; j < propositions.length; j++) {
-              document
-                .getElementById(propositions[j].id)
-                .setAttribute("draggable", "false");
-            }
-
-            start.style.display = "block";
-            if (prop.id == answer[questionNumero - 1].réponse) {
-              juste = true;
-              dropArea.style.background = "rgb(24, 255, 3)";
-              document.getElementById(prop.id).style.background =
-                "rgb(65, 214, 60)";
-              anecdotes.style.background = "rgb(225, 119, 35)";
-              anecdotes.innerHTML = answer[questionNumero - 1].anecdote;
-            } else {
-              dropArea.style.background = "rgb(196, 12, 4)";
-              document.getElementById(
-                answer[questionNumero - 1].réponse
-              ).style.background = "rgb(24, 255, 3)";
-            }
-          });
-        });
+        choix = prop;
       });
     }
+  }
+});
+
+// Prevent default
+dropArea.addEventListener("dragover", (e) => {
+  e.preventDefault();
+});
+
+// Détecte le drop sur la zone et recrée un bouton similaire dedans
+dropArea.addEventListener("drop", () => {
+  choix.style.visibility = "hidden";
+  dropArea.innerHTML = `<button id="dropped" class="propositions" draggable="true">${choix.textContent}</button>`;
+
+  // Enlève le draggable de toutes les propositions
+  for (i = 0; i < propositions.length; i++) {
+    document
+      .getElementById(propositions[i].id)
+      .setAttribute("draggable", "false");
+  }
+
+  // Affichage du bouton "Suivant"
+  start.style.display = "block";
+
+  // Vérifie si la réponse est la bonne
+  if (choix.id == answer[questionNumero - 1].réponse) {
+    score++;
+    dropArea.style.background = "rgb(24, 255, 3)";
+    document.getElementById("dropped").style.background = "rgb(65, 214, 60)";
+    anecdotes.style.background = "rgb(225, 119, 35)";
+    anecdotes.innerHTML = answer[questionNumero - 1].anecdote;
+  } else {
+    dropArea.style.background = "rgb(196, 12, 4)";
+    document.getElementById(
+      answer[questionNumero - 1].réponse
+    ).style.background = "rgb(24, 255, 3)";
   }
 });
