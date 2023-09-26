@@ -9,16 +9,21 @@ body {
 }
 
 #container {
+  width: 1700px;
+  max-width: 100%;
+  margin: 0 auto;
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
+  justify-content: space-evenly;
+  align-items: center;
 }
 
 .cartes {
   background: rgb(255, 109, 0);
+  min-width: 300px;
   width: 300px;
   padding: 0.5rem;
-  margin: 3rem;
+  margin: 1.5rem;
   border-radius: 1rem;
 }
 
@@ -31,4 +36,68 @@ h2 {
   height: 10rem;
   object-fit: cover;
   border-radius: 1rem;
+}
+
+#container > img {
+  width: 750px;
+  max-width: 90%;
+  border: 1rem solid white;
+  border-radius: 1rem;
+}
+
+#start {
+  background: rgb(225, 119, 35);
+  color: white;
+  padding: 0.5rem;
+  cursor: pointer;
+  display: none;
+  margin: 2.5rem auto 0;
+}
+
+span {
+  color: black;
+}
+
+.containerPropositions {
+  width: 1000px;
+  max-width: 100%;
+  height: 50px;
+}
+
+.propositions {
+  background: rgb(225, 119, 35);
+  width: 200px;
+  height: 50px;
+  border-radius: 0.5rem;
+  cursor: grab;
+}
+
+.propositions:active {
+  cursor: grabbing;
+}
+
+#dropArea {
+  background: white;
+  color: black;
+  font-size: 1.5rem;
+  font-weight: 700;
+  border: 4px dashed black;
+  width: 400px;
+  height: 200px;
+  display: none;
+  margin: 2.5rem auto;
+  display: none;
+  justify-content: center;
+  align-items: center;
+}
+
+#description {
+  margin-bottom: 2.5rem;
+}
+
+#anecdotes {
+  background: rgb(225, 119, 35);
+  display: inline;
+  margin-top: 2.5rem;
+  height: 17.5px;
 }
