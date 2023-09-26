@@ -9,6 +9,8 @@ let questionNumero = 0;
 let juste = false;
 let score = 0;
 
+anecdotes.style.background = "transparent";
+
 class Quizz {
   constructor(titre, nom, extension) {
     this.titre = titre;
@@ -83,6 +85,9 @@ for (i = 0; i < boutons.length; i++) {
 }
 
 start.addEventListener("click", () => {
+  anecdotes.innerHTML = "";
+  anecdotes.style.background = "transparent";
+
   if (start.textContent == "Accueil") {
     window.location.reload();
   }
@@ -120,8 +125,6 @@ start.addEventListener("click", () => {
     start.innerHTML = "Accueil";
     start.style.display = "block";
   } else {
-    anecdotes.innerHTML = "";
-
     questionNumero++;
 
     container.innerHTML = `
@@ -165,14 +168,13 @@ start.addEventListener("click", () => {
                 .setAttribute("draggable", "false");
             }
 
-            console.log(answer);
-
             start.style.display = "block";
             if (prop.id == answer[questionNumero - 1].réponse) {
               juste = true;
               dropArea.style.background = "rgb(24, 255, 3)";
               document.getElementById(prop.id).style.background =
                 "rgb(65, 214, 60)";
+              anecdotes.style.background = "rgb(225, 119, 35)";
               anecdotes.innerHTML = answer[questionNumero - 1].anecdote;
             } else {
               dropArea.style.background = "rgb(196, 12, 4)";

@@ -97,7 +97,8 @@ span {
 
 #anecdotes {
   background: rgb(225, 119, 35);
+  color: rgba(255, 255, 255, 0.75);
   display: inline;
   margin-top: 2.5rem;
-  height: 17.5px;
+  padding: 0.5rem;
 }
