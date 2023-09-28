@@ -50,6 +50,7 @@ const nombres = new Quizz("Trouver le Nombre", "nombres", "jpg");
 const microsoft = new Quizz("Microsoft", "microsoft", "jpg");
 const php = new Quizz("PHP", "php", "jpg");
 const internet = new Quizz("Méandres d'Internet", "internet", "jpg");
+const starwars = new Quizz("Star Wars", "starwars", "jpg");
 
 // --------------------
 // AFFICHAGE INITIAL
@@ -63,7 +64,8 @@ container.innerHTML =
   nombres.carte +
   microsoft.carte +
   php.carte +
-  internet.carte;
+  internet.carte +
+  starwars.carte;
 
 anecdotes.style.background = "transparent";
 
